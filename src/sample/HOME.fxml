@@ -22,8 +22,8 @@
       <Button layoutX="14.0" layoutY="249.0" mnemonicParsing="false" onMouseClicked="#refreshTableClick" prefHeight="67.0" prefWidth="71.0" text="refresh" />
       <TextField fx:id="nomeTextField" layoutX="181.0" layoutY="61.0" prefHeight="38.0" prefWidth="240.0" />
       <TextField fx:id="cognomeTextField" layoutX="181.0" layoutY="111.0" prefHeight="38.0" prefWidth="240.0" />
-      <Text layoutX="101.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="nome" />
-      <Text layoutX="105.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cognome" />
+      <Text layoutX="117.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" text="nome" />
+      <Text layoutX="107.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="cognome" />
       <Button layoutX="444.0" layoutY="118.0" mnemonicParsing="false" onMouseClicked="#addUser" prefHeight="31.0" prefWidth="130.0" text="ADD" />
       <Text fx:id="intestazioneText" layoutX="26.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="client : " wrappingWidth="496.13671875">
          <font>
