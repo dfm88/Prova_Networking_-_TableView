@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane prefHeight="177.0" prefWidth="276.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ControllerLogIN">
+   <children>
+      <Button layoutX="52.0" layoutY="59.0" mnemonicParsing="false" onMouseClicked="#onServerButtonClick" prefHeight="52.0" prefWidth="83.0" text="ON" />
+      <Button layoutX="10.0" layoutY="8.0" mnemonicParsing="false" onMouseClicked="#offServerButtonClick" prefHeight="40.0" prefWidth="83.0" text="OFF" />
+      <Button layoutX="154.0" layoutY="48.0" mnemonicParsing="false" onMouseClicked="#loginButtonClick" prefHeight="74.0" prefWidth="108.0" text="LOGIN --&gt;" />
+      <TextField fx:id="loginText" layoutX="113.0" layoutY="16.0" />
+   </children>
+</Pane>
