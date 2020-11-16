@@ -2,10 +2,16 @@ package sample;
 
 import Bean.UserBean;
 import DAO.UserDAO;
+import UnoProvaClientVecchio.Client;
 import Util.DBConnection;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -14,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,12 +64,13 @@ public class ControllerHome implements Initializable {
     }
 
     @FXML
-    void addUser(MouseEvent event) throws SQLException, ClassNotFoundException {
+    void addUser(MouseEvent event) throws SQLException, ClassNotFoundException, IOException {
 
-
-        userDao.addUserInDB(cognomeTextField.getText(), nomeTextField.getText());
-        tabella.getItems().clear();
-        popolaTable();
+        Client.getClientMaster().aggiungiUserinTabella(cognomeTextField.getText(), nomeTextField.getText());
+     //   userDao.addUserInDB(cognomeTextField.getText(), nomeTextField.getText());
+      //  tabella.getItems().clear();
+  //      popolaTable();
+        partiTimer();
 
     }
 
@@ -72,7 +80,7 @@ public class ControllerHome implements Initializable {
         intestazioneText.setText("Client : "+ControllerLogIN.logBean.getUsername());
 
         tabella.getItems().clear();
-        popolaTable();
+    //    popolaTable();
 
     }
 
@@ -81,8 +89,14 @@ public class ControllerHome implements Initializable {
 
         popolaTable();
 
+        partiTimer();
 
-        Timer timer = new Timer();
+
+    }
+
+    public void partiTimer()
+    {
+       Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -97,8 +111,25 @@ public class ControllerHome implements Initializable {
 
 
             }
-        }, 0, 2000);
+        }, 0, 1000);
+/*
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5),
+                new EventHandler<ActionEvent>() {
+                    public void handle(ActionEvent ae) {
+                        // do stuff
 
+
+                        new Thread(() -> {
+                            // code goes here.
+                            tabella.getItems().clear();
+                            popolaTable();
+                        }).start();
+
+                    }
+                }
+        ));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();*/
     }
 
     public void popolaTable()
@@ -118,7 +149,11 @@ public class ControllerHome implements Initializable {
 
         try {
 
-            ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
+//            ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
+
+            ArrayList<UserBean> userArrayList = Client.getClientMaster().aggiornaTabella();
+
+            con.close();
 
 
 
@@ -130,7 +165,7 @@ public class ControllerHome implements Initializable {
 
             tabella.setItems(userListObservable);
 
-        } catch (SQLException | ClassNotFoundException throwables) {
+        } catch (IOException | SQLException throwables) {
             throwables.printStackTrace();
         }
 
