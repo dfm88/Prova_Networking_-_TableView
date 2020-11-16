@@ -5,7 +5,6 @@ import javafx.application.Platform;
 
 import java.io.*;
 import java.net.Socket;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -39,7 +38,7 @@ public class TaskReadThreadUno implements Runnable {
                 //get input from the client
                 String message = inSocket.readLine();
 
-                System.out.println("Messaggio Ricevuto dal Serverrrrrrr : "+message + " --- "+ LocalDateTime.now());
+                System.out.println("Messaggio Ricevuto dal Serverrrrrrr : "+message);
 
                 //append message of the Text Area of UI (GUI Thread)
                 Platform.runLater(() -> {
