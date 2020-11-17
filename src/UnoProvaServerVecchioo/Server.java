@@ -1,7 +1,5 @@
 package UnoProvaServerVecchioo;
 
-import provaNetwoking2.TaskClientConnection;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -53,11 +51,11 @@ public class Server
 				ServerThread servertThread = new ServerThread(socketClient, this);
 				connectionList.add(servertThread);
 
-					System.out.println("connection list completa : ");
+			/*		System.out.println("connection list completa : ");
 					for(int i = 0; i<connectionList.size(); i++)
 					{
-						System.out.println(connectionList.get(i).getName());
-					}
+						System.out.println("utenti connessi : "+connectionList.get(i).getName());
+					}*/
 				Thread thread = new Thread(servertThread);
 				thread.start();
 

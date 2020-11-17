@@ -2,16 +2,21 @@ package sample;
 
 
 import Bean.LoginBean;
-import TreProvaClientNuovo.Client3;
+import _TreProvaClientNuovo.Client3;
 import UnoProvaClientVecchio.Client;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 public class ControllerLogIN implements Initializable {
@@ -23,6 +28,7 @@ public class ControllerLogIN implements Initializable {
     @FXML
     private TextField loginText;
 
+    static ControllerHome cH;
     @FXML
     void loginButtonClick(MouseEvent event) throws IOException {
 
@@ -36,8 +42,29 @@ public class ControllerLogIN implements Initializable {
 
         logBean = new LoginBean(username);
 
-        main = new Main();
-        main.ShowHomePageView();
+        //mostro la pagina
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("./HOME.fxml"));
+
+        Pane homePageLayout = loader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(homePageLayout));
+
+        ControllerHome ccHH = (ControllerHome) loader.getController();
+        ccHH.setModel(Client.getClientMaster());
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.setTitle("HomePage");
+
+
+
+
+        //mostro lo stage Homepage
+        stage.show();
+
+
+
+
 
     }
 
@@ -52,33 +79,76 @@ public class ControllerLogIN implements Initializable {
 
 
     @FXML
-    void loginServerButton(MouseEvent event) throws IOException {
+    void checkButton(MouseEvent event) throws IOException {
         Client c = Client.getClientMaster();
         c.loginClient();
 
     }
 
+    static ProvaController cP;
 
     @FXML
     void provaServerButton(MouseEvent event) throws IOException {
 
-       Client c = Client.getClientMaster();
-        c.provaClient();
-      //  c3.setMsg("testo#client 0");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("./prova.fxml"));
+        //    FXMLLoader loader = new FXMLLoader();
+        //   loader.setLocation(Main.class.getResource("./HOME.fxml"));
+        Pane homePageLayout = loader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(homePageLayout));
+        cP = (ProvaController) loader.getController();
+ //       cH = (ControllerHome)loader.getController();
 
+        //Client c = Client.getClientMaster();
+        //    cH.setModel(server);
+ //       Client.getClientMaster().setController(cH);
+
+        //associo alla variabile loginLayout di tipo "AnchorPane" il file login.fxml
+
+
+        //creo un nuovo stage per mostrare la nuova finestra Home
+
+
+        //blocco l'accesso alla la primaryStage del Login
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        stage.setTitle("HomePage");
+
+
+
+
+        //mostro lo stage Homepage
+        stage.show();
 
 
     }
 
-    @FXML
+   /* @FXML
     void inviaCiaoAlClient(MouseEvent event) throws IOException, InterruptedException {
-        Client c = Client.getClientMaster();
+
         c.triggeraServerperOttenereRisposta();
 
-    }
+    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        try {
+            c = Client.getClientMaster();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+    private Client c;
+
+    public void setModel(Client clientMaster) {
+        this.c = clientMaster;
+  //      loginText.textProperty().bind(c.numeroProperty().asString());
+       
 
     }
 }

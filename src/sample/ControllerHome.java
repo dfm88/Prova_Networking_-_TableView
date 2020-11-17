@@ -3,6 +3,8 @@ package sample;
 import Bean.UserBean;
 import DAO.UserDAO;
 import UnoProvaClientVecchio.Client;
+
+import UnoProvaClientVecchio.Observer;
 import Util.DBConnection;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -31,7 +33,7 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ControllerHome implements Initializable {
+public class ControllerHome implements Initializable, Observer {
 
     private UserDAO userDao;
     private Connection con;
@@ -55,6 +57,16 @@ public class ControllerHome implements Initializable {
     @FXML
     private Text intestazioneText;
 
+    Client model;
+
+    public Client getModel() {
+        return model;
+    }
+
+    public void setModel(Client model) {
+        this.model = model;
+    }
+
     @FXML
     void apriRicerca(MouseEvent event) throws IOException {
 
@@ -70,7 +82,7 @@ public class ControllerHome implements Initializable {
      //   userDao.addUserInDB(cognomeTextField.getText(), nomeTextField.getText());
       //  tabella.getItems().clear();
   //      popolaTable();
-        partiTimer();
+     //   partiTimer();
 
     }
 
@@ -87,14 +99,24 @@ public class ControllerHome implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        popolaTable();
+        try {
 
-        partiTimer();
+            Client.getClientMaster().Attach(this);
+
+            Client.getClientMaster().aggiornaTabellaNew();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //   partiTimer();
 
 
     }
 
-    public void partiTimer()
+  /*  public void partiTimer()
     {
        Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -111,7 +133,7 @@ public class ControllerHome implements Initializable {
 
 
             }
-        }, 0, 1000);
+        }, 0, 1000);*/
 /*
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5),
                 new EventHandler<ActionEvent>() {
@@ -129,10 +151,20 @@ public class ControllerHome implements Initializable {
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();*/
+        timeline.play();
+    }*/
+
+    @Override
+    public void update(Object o) {
+
+        if (o instanceof Client) {
+            System.out.println("UPDATE triggerato");
+            popolaTable(((Client) o).getListaDalServer());
+        }
     }
 
-    public void popolaTable()
+
+    public void popolaTable(ArrayList<UserBean> userArrayList)
     {
         intestazioneText.setText("Client : "+ControllerLogIN.logBean.getUsername());
 
@@ -151,7 +183,7 @@ public class ControllerHome implements Initializable {
 
 //            ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
 
-            ArrayList<UserBean> userArrayList = Client.getClientMaster().aggiornaTabella();
+             userArrayList = Client.getClientMaster().getListaDalServer();
 
             con.close();
 
@@ -171,4 +203,6 @@ public class ControllerHome implements Initializable {
 
 
     }
+
+
 }

@@ -6,6 +6,7 @@ import Bean.UserBean;
 import DAO.UserDAO;
 import Util.DBConnection;
 
+import Util.JsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.internal.LinkedTreeMap;
@@ -19,6 +20,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 
@@ -40,6 +43,8 @@ public class ServerThread extends Thread
     										//la notizia a cui viene aggiunto un commento
     public int numeroUtentiConnessi;
     private Server serverMain;
+	private String jsonDaClient;
+	private static Map<String, Runnable> comandi = new HashMap<String, Runnable>();
     		
 //inizio gestione Server con Thread
     
@@ -48,6 +53,7 @@ public class ServerThread extends Thread
 	{
 		this.socketClient = s;
 		this.serverMain = server;
+		compilaHashMap();
 	}
     
     @Override
@@ -64,10 +70,10 @@ public class ServerThread extends Thread
         
         //chiamo il metodo che mi consente di accettare comandi dal client
 
-			new Thread(() -> {
+		//	new Thread(() -> {
 				// code goes here.
 				comandiClient();
-			}).start();
+		//	}).start();
 
 			//comandiClient();
 		
@@ -88,124 +94,93 @@ public class ServerThread extends Thread
 
 		try
 		{
+			//leggo il json ricevuto dal client
+			jsonDaClient = in.readLine();
 
-
-			//prova GSON
-			String inputClientString = in.readLine();
-
-			System.out.println("[1] stringa dal client "+inputClientString);
-/*
-			Gson gson = new Gson();
-			//UserBean user = gson.fromJson(inputClientString, UserBean.class);
-			createCommand cmd = gson.fromJson(inputClientString, createCommand.class);
-			createCommand cmd2 = cmd;
-			UserBean u = gson.fromJson(new Gson().toJson(((LinkedTreeMap<String, Object>) cmd.getObj())), UserBean.class);
-			System.out.println("Con JSON : "+u.getNome());
-
-*/
-
-			//UPDATE COSTANTE
-			if(inputClientString.equals("update"))
+			if(jsonDaClient!=null)
 			{
-				Connection con = null;
-				try {
-					con = DBConnection.getConnection();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-				UserDAO userDao = new UserDAO(con);
+				System.out.println("Json dal client : "+jsonDaClient);
 
-				System.out.println("[2] il Client ha chiamato il metodo update tabella'");
+		/*	if(jsonDaClient.equals("login"))
+			{
+				System.out.println("chiamaoto metodo login del server");
 
-				ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
-
-				String arrayInJson = (new Gson().toJson(userArrayList));
-
-				out.println(arrayInJson);
+				out.println("ciao");
 				out.flush();
 
-				con.close();
 
 
-
-				run();
 			}
 
-
-			//INSERISCI IN TABELLA
-			if(inputClientString.equals("aggiungi"))
-			{
-				String nome = in.readLine();
-				String cognome = in.readLine();
-
-				Connection con = null;
-				try {
-					con = DBConnection.getConnection();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-				UserDAO userDao = new UserDAO(con);
-
-				System.out.println("il Client ha chiamato il metodo aggiungi tabella' su cognome "+cognome+" / e nome : "+nome);
-
-				userDao.addUserInDB(cognome, nome);
+			run();*/
+				//estraggo la stringa corrispondente al 'comando'
+				// dell'oggetto Create Command del client mappato nel json
+				String comando = JsonUtil.getComandoDaJson(jsonDaClient);
 
 
-				out.println("ok li ho inseriti");
-				out.flush();
-				con.close();
 
+				//    serverMain.compilaTextArea("Comando ricevuto dal client : "+comando);
+
+				//invoco dall'HashMap 'comandi' il metodo corrispondente al comando
+				comandi.get(comando).run();
 
 				run();
 			}
 
 
 
-	//		System.out.println("Ricevuto  dal client : "+cmd.getComando());
-			//System.out.println("aaaaaaaaaaaaa  "+inputClientString);
-			
-			// "  LOGIN  " 
-			if(inputClientString.equals("login"))
-			{
-				serverMain.broadcast("buongiorno a tutti");
-			//	out.println("buongiorno a tutti col vecchio mertodo");
-			//	out.flush();
 
-				System.out.println("il Client mi ha mandato la stringa 'login'");
-				run();
-			}
-
-			// "  PROVA  "
-			else if(inputClientString.equals("prova"))
-			{
-
-				System.out.println("il Client mi ha mandato la stringa 'prova'");
-				run();
-
-			}
-
-			// "  PROVA  "
-			else if(inputClientString.equals("trigger"))
-			{
-				System.out.println("il Client mi ha mandato la stringa 'trigger' "+LocalDateTime.now());
-				mandaMessaggioAlCLient();
-
-
-
-			}
-			
 
 		} catch (IOException e)
 		{
 			
 			e.printStackTrace();
-		} catch (SQLException throwables) {
-			throwables.printStackTrace();
+		}
+	}
+
+	public void compilaHashMap()
+	{
+		if(comandi.isEmpty())
+		{ System.out.println("dovuta compilare hashmap");
+			comandi.put("update", ()-> {
+				try {
+					update();
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
+			});
+		}
+	}
+
+	private void update() throws SQLException, ClassNotFoundException {
+
+		Connection con = null;
+		try {
+			con = DBConnection.getConnection();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		UserDAO userDao = new UserDAO(con);
+
+		System.out.println("[2] il Client ha chiamato il metodo update tabella'");
+
+		ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
+
+						//String arrayInJson = (new Gson().toJson(userArrayList));
+
+		String jsonUser = JsonUtil.setComandoJson("aggiornati", userArrayList);
+
+
+		out.println(jsonUser);
+		out.flush();
+
+		con.close();
+
+
+
+		run();
 	}
-		
+
 	/***************************************************************************/
 	public void mandaMessaggioAlCLient()
 	{

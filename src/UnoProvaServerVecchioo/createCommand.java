@@ -1,6 +1,7 @@
 package UnoProvaServerVecchioo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class createCommand
 {
@@ -11,13 +12,12 @@ public class createCommand
 
 
 
+
     public createCommand(String comando, Object obj) {
         this.comando = comando;
         this.obj = obj;
-
-
-
     }
+
 
     public String getComando() {
         return comando;
