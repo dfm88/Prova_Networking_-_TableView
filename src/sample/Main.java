@@ -1,6 +1,7 @@
 package sample;
 
 import UnoProvaClientVecchio.Client;
+import UnoProvaClientVecchio.fakeClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,8 +25,10 @@ public class Main extends Application {
         Pane root = loader.load();
         Scene scene = new Scene (root);
 
+        fakeClient fakeCli = new fakeClient();
+
         cL = (ControllerLogIN)loader.getController();
-        cL.setModel(Client.getClientMaster());
+        cL.setModel(fakeCli);
 
 
 
@@ -98,7 +101,7 @@ public class Main extends Application {
 
  //Client c = Client.getClientMaster();
     //    cH.setModel(server);
-        Client.getClientMaster().setController(cH);
+//        Client.getClientMaster().setController(cH);
 
         //associo alla variabile loginLayout di tipo "AnchorPane" il file login.fxml
 

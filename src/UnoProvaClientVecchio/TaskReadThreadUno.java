@@ -22,7 +22,8 @@ public class TaskReadThreadUno implements Runnable {
     Socket socket;
     Client client;
     private BufferedReader inSocket;
-    private PrintWriter outSocket;
+  //  private PrintWriter outSocket;
+  //   DataInputStream inSocket;
 
     private static Map<String, Runnable> comandi = new HashMap<String, Runnable>();
 
@@ -36,7 +37,7 @@ public class TaskReadThreadUno implements Runnable {
         private void compilaHashMap() throws IOException {
 
             if (comandi.isEmpty()) {
-                System.out.println("dovuta compilare hashmap");
+         //       System.out.println("dovuta compilare hashmap");
                 comandi.put("aggiornati", () -> {
                     try {
                         Client.getClientMaster().aggiornatiListaUser();
@@ -50,23 +51,28 @@ public class TaskReadThreadUno implements Runnable {
         @Override
         public void run () {
             //continuously loop it
-            while (!Thread.currentThread().isInterrupted()) {
+            while (true) {
                 try {
-                    System.out.println("Partito metodo run di TaskReadThreadUno");
+                    System.out.println("[00 TaskReadUno run() -  inizio : **" + socket.getLocalPort()+"** Client "+ client+" ClientMaster "+ Client.getClientMaster());
+
                     //Create data input stream
                     inSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    outSocket = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                 //   inSocket = new DataInputStream(socket.getInputStream());
+               //     outSocket = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
+                    System.out.println("[01 TaskReadUno run() -  dopo inizializzazione flussi : **" + socket.getLocalPort()+"** Client "+ client+" ClientMaster "+ Client.getClientMaster()+" : inSocket : "+inSocket);
 
                     //get input from the client
                     String message = inSocket.readLine();
 
                     String comando = JsonUtil.getComandoDaJson(message);
 
-                    System.out.println("Comando Ricevuto dal Serverrrrrrr : " + comando);
+                    System.out.println("[02 TaskReadUno run() -  comando ricevuto dal server : " + comando);
 
                     Client.getClientMaster().setEsitoDalServer(message);
 
                     comandi.get(comando).run();
+
 
                     //append message of the Text Area of UI (GUI Thread)
                     Platform.runLater(() -> {

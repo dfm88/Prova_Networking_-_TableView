@@ -1,7 +1,4 @@
-
-package Util;
-
-
+package _provaNetworking1;
 
 
 import _provaNetworking1.Server1;
@@ -37,6 +34,7 @@ public class ServerConnection extends Thread {
         {
             //itero per tutti i client e chiamo il metodo send String to client
             ServerConnection sc = server.connections.get(index);
+            System.out.println(server.connections.get(index).socket);
             sc.sendStringToClient(text);
         }
     }

@@ -28,11 +28,11 @@ public class Server
 	{
 			
 	//System.out.println(percorsoDBUser);
-		System.out.println("[] - Inizializzo il Server");
+		System.out.println("[00 Server Main] - Inizializzo il Server");
 		
 		server = new ServerSocket(porta);//inizializzo il servizio
 		
-		System.out.println("[] - Server in ascolto sulla porta " + porta);
+		System.out.println("[01 Server Main] - Server in ascolto sulla porta " + porta);
 				
 			while(true)
 			{
@@ -43,21 +43,37 @@ public class Server
 												//la funzione server.accept() resttuisce una variabile socket
 												//che in questo caso è quella del client
 				
-				System.out.println("[] - Connessione stabilita con il client");
+				System.out.println("[02 Server Main] - Connessione stabilita con il client");
 			
 				
-				System.out.println("[] - Elenco abilitati :");
+				System.out.println("[03 Server Main] - Elenco abilitati :");
 
 				ServerThread servertThread = new ServerThread(socketClient, this);
 				connectionList.add(servertThread);
+
+					for(int i=0; i< connectionList.size();i++)
+					{
+						System.out.println("[04 Server Main] - server : "+server);
+						System.out.println("[05 Server Main] - client socket : "+socketClient);
+						System.out.println("[06 Server Main] -  lista dei serverThread : "+i+"  : "+connectionList.get(0).getSocketClient());
+						connectionList.get(connectionList.size() -1).setSocketClient(socketClient);
+						System.out.println("[07 Server Main] - lista dell'ultimo serverThread dopo aer forzato SocketClient : "+i+"  : "+connectionList.get(connectionList.size() -1).getSocketClient());
+					}
+
 
 			/*		System.out.println("connection list completa : ");
 					for(int i = 0; i<connectionList.size(); i++)
 					{
 						System.out.println("utenti connessi : "+connectionList.get(i).getName());
 					}*/
-				Thread thread = new Thread(servertThread);
-				thread.start();
+
+
+					new Thread(() -> {
+						// code goes here.
+						Thread thread = new Thread(connectionList.get(connectionList.size() -1));
+						System.out.println("[08 Server Main] -  lascio il compito a ServeThread con socket : "+socketClient);
+						thread.start();
+					}).start();
 
 				
 				//inizio gestione Thread		
@@ -74,9 +90,10 @@ public class Server
 			
 	}
 
-	public void broadcast(String message) {
-		System.out.println("chiamato metodo broadcast di server");
+	public void broadcast(String message) throws IOException {
+		System.out.println("[09 Server Main] -  broadcast : "+socketClient);
 		for (ServerThread clientConnection : this.connectionList) {
+			System.out.println("[10 Server Main] -  broadcast : inviato a "+socketClient+"+  ServerThread : "+clientConnection.getSocketClient());
 			clientConnection.sendMessage(message);
 		}
 	}

@@ -2,9 +2,10 @@ package sample;
 
 import Bean.UserBean;
 import DAO.UserDAO;
-import UnoProvaClientVecchio.Client;
+
 
 import UnoProvaClientVecchio.Observer;
+import UnoProvaClientVecchio.fakeClient;
 import Util.DBConnection;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -15,7 +16,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -57,13 +60,13 @@ public class ControllerHome implements Initializable, Observer {
     @FXML
     private Text intestazioneText;
 
-    Client model;
+    fakeClient model;
 
-    public Client getModel() {
+    public fakeClient getModel() {
         return model;
     }
 
-    public void setModel(Client model) {
+    public void setModel(fakeClient model) {
         this.model = model;
     }
 
@@ -78,7 +81,7 @@ public class ControllerHome implements Initializable, Observer {
     @FXML
     void addUser(MouseEvent event) throws SQLException, ClassNotFoundException, IOException {
 
-        Client.getClientMaster().aggiungiUserinTabella(cognomeTextField.getText(), nomeTextField.getText());
+       getModel().aggiungiUserinTabella(cognomeTextField.getText(), nomeTextField.getText());
      //   userDao.addUserInDB(cognomeTextField.getText(), nomeTextField.getText());
       //  tabella.getItems().clear();
   //      popolaTable();
@@ -99,11 +102,16 @@ public class ControllerHome implements Initializable, Observer {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+
+
+
+        setModel(ControllerLogIN.c);
+
         try {
 
-            Client.getClientMaster().Attach(this);
+            getModel().Attach(this);
 
-            Client.getClientMaster().aggiornaTabellaNew();
+            getModel().aggiornaTabellaNew();
 
 
         } catch (IOException e) {
@@ -157,9 +165,16 @@ public class ControllerHome implements Initializable, Observer {
     @Override
     public void update(Object o) {
 
-        if (o instanceof Client) {
+        if (o instanceof fakeClient) {
             System.out.println("UPDATE triggerato");
-            popolaTable(((Client) o).getListaDalServer());
+
+            Platform.runLater(new Runnable() {
+                @Override public void run() {
+                    tabella.getItems().clear();
+                    popolaTable(((fakeClient) o).getListaDalServer());
+                }
+            });
+
         }
     }
 
@@ -183,7 +198,7 @@ public class ControllerHome implements Initializable, Observer {
 
 //            ArrayList<UserBean> userArrayList = (ArrayList<UserBean>) userDao.getUserFromDB();
 
-             userArrayList = Client.getClientMaster().getListaDalServer();
+             userArrayList =  getModel().getListaDalServer();
 
             con.close();
 
@@ -197,7 +212,7 @@ public class ControllerHome implements Initializable, Observer {
 
             tabella.setItems(userListObservable);
 
-        } catch (IOException | SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 

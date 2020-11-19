@@ -2,7 +2,8 @@ package sample;
 
 
 import Bean.LoginBean;
-import _TreProvaClientNuovo.Client3;
+import UnoProvaClientVecchio.fakeClient;
+
 import UnoProvaClientVecchio.Client;
 
 import javafx.fxml.FXML;
@@ -23,7 +24,7 @@ public class ControllerLogIN implements Initializable {
 
     private Main main;
     public static LoginBean logBean;
-    Client3 c3;
+
 
     @FXML
     private TextField loginText;
@@ -42,15 +43,20 @@ public class ControllerLogIN implements Initializable {
 
         logBean = new LoginBean(username);
 
-        //mostro la pagina
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("./HOME.fxml"));
 
-        Pane homePageLayout = loader.load();
         Stage stage = new Stage();
+        //mostro la pagina
+        FXMLLoader loader = new FXMLLoader();
+
+
+
+        Pane homePageLayout = loader.load( (getClass().getResource("./HOME.fxml").openStream()));
+
         stage.setScene(new Scene(homePageLayout));
 
         ControllerHome ccHH = (ControllerHome) loader.getController();
-        ccHH.setModel(Client.getClientMaster());
+
+          ccHH.setModel(getC());
 
         stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -60,7 +66,7 @@ public class ControllerLogIN implements Initializable {
 
 
         //mostro lo stage Homepage
-        stage.show();
+        stage.showAndWait();
 
 
 
@@ -70,8 +76,8 @@ public class ControllerLogIN implements Initializable {
 
     @FXML
     void connettiServerButtono(MouseEvent event) throws IOException {
-        Client c = Client.getClientMaster();
-        c.connetti();
+     //  c.connetti();
+
 
     }
 
@@ -80,8 +86,8 @@ public class ControllerLogIN implements Initializable {
 
     @FXML
     void checkButton(MouseEvent event) throws IOException {
-        Client c = Client.getClientMaster();
-        c.loginClient();
+      //  Client c = Client.getClientMaster();
+      //  c.loginClient();
 
     }
 
@@ -118,7 +124,7 @@ public class ControllerLogIN implements Initializable {
 
 
         //mostro lo stage Homepage
-        stage.show();
+        stage.showAndWait();
 
 
     }
@@ -133,19 +139,19 @@ public class ControllerLogIN implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        try {
-            c = Client.getClientMaster();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
 
 
 
     }
-    private Client c;
+    public static fakeClient c;
 
-    public void setModel(Client clientMaster) {
+    public fakeClient getC() {
+        return c;
+    }
+
+    public void setModel(fakeClient clientMaster) {
         this.c = clientMaster;
   //      loginText.textProperty().bind(c.numeroProperty().asString());
        

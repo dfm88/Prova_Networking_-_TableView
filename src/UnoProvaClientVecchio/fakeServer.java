@@ -1,7 +1,4 @@
-package _provaNetworking1;
-
-
-
+package UnoProvaClientVecchio;
 
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
@@ -11,12 +8,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Server1 {
+public class fakeServer {
 
 
     ServerSocket ss;
     //creo un arrai che conservi tutte le connessioni al server
-    public ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
+    public ArrayList<fakeServerConnection> connections = new ArrayList<fakeServerConnection>();
     boolean shouldRun = true;
 
     //Socket s;
@@ -24,7 +21,7 @@ public class Server1 {
     //DataOutputStream dout;
 
     //costruttore
-    public Server1() {
+    public fakeServer() {
         try {
 
 
@@ -36,7 +33,7 @@ public class Server1 {
                 Socket s = ss.accept();
                 System.out.println("accettata connessione da socket "+s);
                 //chreo un oggetto ServerConnection e gli passo lo stesso oggetto chiamate ovver l'oggetto della classe Server
-                ServerConnection sc = new ServerConnection(s, this);
+                fakeServerConnection sc = new fakeServerConnection(s, this);
                 sc.start();
                 connections.add(sc); // aggiungo all'arrayList
 
@@ -59,7 +56,7 @@ public class Server1 {
 
     public static void main(String[] args) {
 
-        new Server1();
+        new fakeServer();
     }
 
 }
